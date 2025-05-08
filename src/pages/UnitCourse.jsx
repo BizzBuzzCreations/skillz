@@ -19,7 +19,7 @@ const UnitCourse = () => {
   const location = useLocation();
 
   return (
-    <>
+    <div className="container m-auto">
       <section className="flex items-center justify-center px-10 py-5 gap-10">
         <div className="flex-1 space-y-3 mt-5">
           <h2 className="text-3xl font-medium">UI/UX Fundamentals</h2>
@@ -143,7 +143,7 @@ const UnitCourse = () => {
         </div>
       </section>
 
-    </>
+    </div>
   )
 }
 
