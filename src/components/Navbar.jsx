@@ -1,13 +1,13 @@
 import logo from '@/assets/Skillz.png'
 import { Button } from './ui/button';
-import { useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Link } from 'react-router-dom';
 
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const hideLogout = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
@@ -32,7 +32,7 @@ const Navbar = () => {
             </PopoverTrigger>
             <PopoverContent className="flex flex-col gap-2">
               <p className='text-lg'>Welcome, John Doe</p>
-              <Button>Log out</Button>
+              <Button onClick={() => navigate('/login')}>Log out</Button>
             </PopoverContent>
           </Popover>
 

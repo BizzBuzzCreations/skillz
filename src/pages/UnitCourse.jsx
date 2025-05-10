@@ -20,7 +20,7 @@ const UnitCourse = () => {
 
   return (
     <div className="container m-auto">
-      <section className="flex items-center justify-center px-10 py-5 gap-10">
+      <section className="flex md:flex-row flex-col-reverse items-center justify-center px-10 py-5 gap-10">
         <div className="flex-1 space-y-3 mt-5">
           <h2 className="text-3xl font-medium">UI/UX Fundamentals</h2>
           <p className="text-lg">This course covers the essentials of designing intuitive, user-centered digital products—from layout and visual hierarchy to usability, accessibility, and user research.</p>
@@ -33,7 +33,7 @@ const UnitCourse = () => {
 
       <section className="text-center p-10">
         <h2 className="text-xl font-semibold">What You'll Learn</h2>
-        <div className="grid grid-cols-2 justify-center items-center m-auto gap-5 mt-5 w-[80%] mx-auto">
+        <div className="grid md:grid-cols-2 grid-cols-1 justify-center items-center m-auto gap-5 mt-5 w-[80%] mx-auto">
           <div className="flex items-center gap-2">
             <FaRegCircleCheck className="text-blue-500 text-xl drop-shadow-md" />
             <p>Core principles of UI/UX design</p>
