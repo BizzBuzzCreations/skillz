@@ -2,7 +2,7 @@ import { LuDot } from "react-icons/lu";
 
 const CoursePlayer = () => {
   return (
-    <div className="flex flex-1 gap-10 px-10 py-5">
+    <div className="container flex flex-1 gap-10 px-10 py-5">
 
       <section className="flex-1">
         <iframe

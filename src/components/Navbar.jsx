@@ -3,6 +3,13 @@ import { Button } from './ui/button';
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Plus } from 'lucide-react';
 
 
 const Navbar = () => {
@@ -20,25 +27,38 @@ const Navbar = () => {
         <li><a href="#" className="">Caterogies</a></li>
         <li><a href="#" className="">FAQ</a></li>
       </ul> */}
+
       {!hideLogout && (
         <>
+          <div className='flex gap-4 items-center'>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger width={18} height={18} className='bg-purple-200 rounded-full p-2'>
+                  <Link to={'/upload'} >
+                    <Plus width={18} height={18} className='text-purple-900' />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Upload new course</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
-          <Popover>
-            <PopoverTrigger>
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </PopoverTrigger>
-            <PopoverContent className="flex flex-col gap-2">
-              <p className='text-lg'>Welcome, John Doe</p>
-              <Button onClick={() => navigate('/login')}>Log out</Button>
-            </PopoverContent>
-          </Popover>
-
+            <Popover>
+              <PopoverTrigger>
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </PopoverTrigger>
+              <PopoverContent className="flex flex-col gap-2">
+                <p className='text-lg'>Welcome, John Doe</p>
+                <Button onClick={() => navigate('/login')}>Log out</Button>
+              </PopoverContent>
+            </Popover>
+          </div>
         </>
       )}
-
 
 
     </nav>

@@ -7,6 +7,7 @@ import Footer from './components/Footer'
 import LogIn from './pages/Login'
 import SignUp from './pages/SignUp'
 import CoursePlayer from './pages/CoursePlayer'
+import UploadCourse from './pages/UploadCourse'
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/course/:id" element={<UnitCourse />} />
           <Route path="/course/:id/player" element={<CoursePlayer />} />
+          <Route path="/upload" element={<UploadCourse />} />
         </Routes>
       <Footer />
     </div>
