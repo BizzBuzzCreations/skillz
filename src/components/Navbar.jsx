@@ -10,6 +10,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Plus } from 'lucide-react';
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
 
 
 const Navbar = () => {
@@ -17,50 +19,56 @@ const Navbar = () => {
   const navigate = useNavigate();
   const hideLogout = location.pathname === "/login" || location.pathname === "/signup";
 
+  const { user } = useContext(AuthContext);
+
+  const { logout } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <nav className="flex justify-between items-center bg-gray-50 w-full p-4 shadow-sm mb-5">
       <Link to="/" className='text-2xl font-mono text-blue-500'><img src={logo} alt="BBCskillz" className='h-9' /></Link>
-      {/* <ul className='flex gap-4 ml-4 text-slate-700'>
-        <li><a href="#" className="active">Home</a></li>
-        <li><a href="#" className="">Courses</a></li>
-        <li><a href="#" className="">Dashboard</a></li>
-        <li><a href="#" className="">Caterogies</a></li>
-        <li><a href="#" className="">FAQ</a></li>
-      </ul> */}
 
       {!hideLogout && (
         <>
           <div className='flex gap-4 items-center'>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger width={18} height={18} className='bg-purple-200 rounded-full p-2'>
-                  <Link to={'/upload'} >
-                    <Plus width={18} height={18} className='text-purple-900' />
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Upload new course</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            {(user?.role === 'admin' || user?.role === 'instructor') && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link to="/upload">
+                      <Plus width={32} height={32} className="text-purple-900 bg-purple-200 rounded-full p-2" />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Upload new course</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
 
             <Popover>
               <PopoverTrigger>
                 <Avatar>
                   <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarFallback>
+                    {user?.name?.[0]?.toUpperCase() || "U"}
+                  </AvatarFallback>
                 </Avatar>
               </PopoverTrigger>
               <PopoverContent className="flex flex-col gap-2">
-                <p className='text-lg'>Welcome, John Doe</p>
-                <Button onClick={() => navigate('/login')}>Log out</Button>
+                <div className='text-lg'>
+                  Welcome, {user?.name || user?.email || "User"}
+                </div>
+                <Button onClick={handleLogout}>Log out</Button>
               </PopoverContent>
             </Popover>
           </div>
         </>
       )}
-
-
     </nav>
   )
 }

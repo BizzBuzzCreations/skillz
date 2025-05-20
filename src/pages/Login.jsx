@@ -3,14 +3,16 @@ import { Input } from "@/components/ui/input"
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
 
-const API_URL = `${import.meta.env.VITE_SERVER_URL}/api/auth/login`;
+const API_URL = `http://localhost:5000/api/auth/login`;
 
 const LogIn = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,7 +24,16 @@ const LogIn = () => {
     setError("");
     try {
       const res = await axios.post(API_URL, form, { withCredentials: true });
-      // Optionally store token or user info here
+      // Store user data in context. If your backend returns a token and user, adjust accordingly:
+      if (res.data.user) {
+        login(res.data.user);
+      } else if (res.data.token) {
+        // If backend returns token and user info, decode or fetch user info here
+        // login(decodedUserInfo);
+      } else {
+        // Fallback: try to use the whole response as user
+        login(res.data);
+      }
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Login failed");
