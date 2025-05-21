@@ -1,6 +1,6 @@
-export const trimWords = (text) => {
+export const trimWords = (text, limit = 100) => {
   if (typeof text !== "string") return "";
-  const words = text.trim().split(/\s+/);
-  if(words.length <= 50) return text;
-  return words.slice(0, 50).join(" ") + "...";
-}
+  text = text.trim();
+  if (text.length <= limit) return text;
+  return text.slice(0, limit).trim() + "...";
+};

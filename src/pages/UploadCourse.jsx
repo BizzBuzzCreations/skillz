@@ -4,7 +4,7 @@ import Editor from "@/components/custom_ui/Editor";
 import { Button } from "@/components/ui/button";
 
 const UploadCourse = () => {
-  const [contents, setContents] = useState([]);
+  const [course, setCourse] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -39,7 +39,7 @@ const UploadCourse = () => {
             <label className="block text-gray-700 text-sm font-bold my-2" htmlFor="course-file">
               Upload Course File
             </label>
-            <ContentManager contents={contents} setContents={setContents} />
+            <ContentManager course={course} setCourse={setCourse} />
             {/* <input
               type="file"
               id="course-file"
