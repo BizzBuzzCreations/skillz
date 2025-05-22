@@ -21,6 +21,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/course/:id" element={<UnitCourse />} />
           <Route path="/course/:id/player" element={<CoursePlayer />} />
+          <Route path="/course/:id/player/:videoId" element={<CoursePlayer />} />
           <Route path="/upload" element={<UploadCourse />} />
         </Routes>
       <Footer />

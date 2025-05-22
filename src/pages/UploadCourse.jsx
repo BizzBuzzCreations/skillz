@@ -1,56 +1,53 @@
 import React, { useState } from "react";
 import ContentManager from "@/components/custom_ui/ContentManager";
-import Editor from "@/components/custom_ui/Editor";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 const UploadCourse = () => {
   const [course, setCourse] = useState({});
+  const { user } = useAuth();
 
-  const handleSubmit = (e) => {
+  const API_URL = `http://localhost:5000/api/courses`;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Now you have access to `contents` here!
-    // You can send contents along with other course data to your backend
-    // Example: console.log(contents);
+    if (!user || !user._id) {
+      alert("You must be logged in as an instructor to upload a course.");
+      return;
+    }
+    // Attach instructor user id
+    const courseData = { ...course, instructor: user._id };
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(user.token ? { Authorization: `Bearer ${user.token}` } : {}),
+        },
+        body: JSON.stringify(courseData),
+      });
+      if (!res.ok) throw new Error("Failed to upload course");
+      alert("Course uploaded successfully!");
+      // Optionally reset form or redirect
+    } catch (err) {
+      alert(err.message || "Error uploading course");
+    }
   };
 
   return (
     <div className="flex-1">
       <div className="flex flex-col items-center justify-center h-full">
         <h1 className="text-3xl font-bold mb-4">Upload Course</h1>
-        <form className="w-full max-w-2xl" onSubmit={handleSubmit}>
+        <form className="w-full max-w-3xl" onSubmit={handleSubmit}>
+          {/* Only show ContentManager for course details and structure */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="course-title">
-              Course Title
-            </label>
-            <input
-              type="text"
-              id="course-title"
-              placeholder="Enter course title"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold my-2" htmlFor="course-description">
-              Course Description
-            </label>
-            <Editor />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold my-2" htmlFor="course-file">
-              Upload Course File
-            </label>
             <ContentManager course={course} setCourse={setCourse} />
-            {/* <input
-              type="file"
-              id="course-file"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            /> */}
           </div>
           <Button type="submit">Upload Course</Button>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default UploadCourse;

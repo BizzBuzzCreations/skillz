@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { LuDot } from "react-icons/lu";
 import axios from "axios";
+import { Badge } from "@/components/ui/badge";
 
 
 const CoursePlayer = () => {
-  const { id } = useParams();
+  const { id, videoId } = useParams();
+  const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentVideo, setCurrentVideo] = useState(null);
+  const [markAsDone, setMarkAsDone] = useState(false);
 
   const API_URL = `http://localhost:5000/api/courses/${id}`;
 
@@ -20,34 +23,29 @@ const CoursePlayer = () => {
       try {
         const res = await axios.get(API_URL);
         setCourse(res.data);
-        console.log(res.data);
-        // Find first video URL in course content or structure
-        let firstVideo = null;
-        if (res.data.content && res.data.content.length > 0) {
-          for (const section of res.data.content) {
-            if (section.resources && section.resources.length > 0) {
-              const videoRes = section.resources.find(r => r.type === 'video' && r.url);
-              if (videoRes) {
-                firstVideo = videoRes.url;
-                break;
-              }
-            }
-          }
-        }
-        if (!firstVideo && res.data.courseStructure && res.data.courseStructure.length > 0) {
-          for (const mod of res.data.courseStructure) {
+        // Find all video URLs from courseStructure
+        let allVideos = [];
+        if (res.data.courseStructure && res.data.courseStructure.length > 0) {
+          res.data.courseStructure.forEach((mod) => {
             if (mod.topics && mod.topics.length > 0) {
-              for (const topic of mod.topics) {
+              mod.topics.forEach((topic) => {
                 if (topic.videoUrls && topic.videoUrls.length > 0) {
-                  firstVideo = topic.videoUrls[0];
-                  break;
+                  topic.videoUrls.forEach((url) => {
+                    allVideos.push(url);
+                  });
                 }
-              }
+              });
             }
-            if (firstVideo) break;
-          }
+          });
         }
-        setCurrentVideo(firstVideo);
+        // If no videoId in URL, redirect to first video
+        if (!videoId && allVideos.length > 0) {
+          navigate(`/course/${id}/player/${encodeURIComponent(allVideos[0])}`, { replace: true });
+        } else if (videoId) {
+          setCurrentVideo(decodeURIComponent(videoId));
+        } else {
+          setCurrentVideo(null);
+        }
       } catch (err) {
         setError("Failed to load course");
       } finally {
@@ -55,14 +53,15 @@ const CoursePlayer = () => {
       }
     };
     fetchCourse();
-  }, [id]);
+    // eslint-disable-next-line
+  }, [id, videoId]);
 
   if (loading) return <div className="p-10 text-center">Loading course...</div>;
   if (error || !course) return <div className="p-10 text-center text-red-500">{error || "Course not found"}</div>;
 
   // Sidebar: only use courseStructure for sidebar items
   let sidebarItems = [];
-  if (course.courseStructure && course.courseStructure.length > 0) {
+  if (course && course.courseStructure && course.courseStructure.length > 0) {
     course.courseStructure.forEach((mod, mIdx) => {
       if (mod.topics && mod.topics.length > 0) {
         mod.topics.forEach((topic, tIdx) => {
@@ -160,7 +159,10 @@ const CoursePlayer = () => {
           <div className="text-gray-500">No video available for this course.</div>
         )}
         <section className="mt-5">
-          {moduleTitle && <h3 className="text-lg font-semibold text-blue-700 mb-1">Module: {moduleTitle}</h3>}
+          <div className="flex items-center justify-between ">
+            {moduleTitle && <h3 className="text-lg font-semibold text-blue-700 mb-1">Module: {moduleTitle}</h3>}
+            {/* <button className="cursor-pointer" onClick={() => setMarkAsDone(true)}>{!markAsDone ? <Badge>Mark as done</Badge> : <Badge className="bg-green-500">Completed</Badge>}</button> */}
+          </div>
           <h2 className="text-2xl font-bold">{topicTitle}</h2>
           {topicDescription && <p className="mb-2 text-gray-700">{topicDescription}</p>}
           {topicResources.length > 0 && (
@@ -202,7 +204,7 @@ const CoursePlayer = () => {
               <div
                 key={idx}
                 className={`bg-gray-100 p-3 rounded-md cursor-pointer ${currentVideo === item.url ? 'ring-2 ring-blue-400' : ''}`}
-                onClick={() => setCurrentVideo(item.url)}
+                onClick={() => navigate(`/course/${id}/player/${encodeURIComponent(item.url)}`)}
               >
                 <h4 className="font-semibold">{item.title}</h4>
                 <div className="flex items-center text-sm text-gray-600">

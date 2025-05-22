@@ -31,13 +31,13 @@ const SignUp = () => {
     try {
       const res = await axios.post(API_URL, form);
       // Store user data in context. If your backend returns a token and user, adjust accordingly:
-      if (res.data.user) {
+      if (res.data.token && res.data.user) {
+        login({ ...res.data.user, token: res.data.token });
+      } else if (res.data.user) {
         login(res.data.user);
       } else if (res.data.token) {
-        // If backend returns token and user info, decode or fetch user info here
-        // login(decodedUserInfo);
+        // login(decodedUserInfo); // Not used
       } else {
-        // Fallback: try to use the whole response as user
         login(res.data);
       }
       setSuccess("Account created! You can now log in.");

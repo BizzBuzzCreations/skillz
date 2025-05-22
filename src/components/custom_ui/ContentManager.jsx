@@ -29,6 +29,10 @@ export default function ContentManager({ course, setCourse }) {
   const [editingTopic, setEditingTopic] = useState(null);
   const [courseStructure, setCourseStructure] = useState([]);
 
+  // Add state for editing section/module
+  const [editingSection, setEditingSection] = useState(null);
+  const [editingModule, setEditingModule] = useState(null);
+
   // Handlers for main fields
   const handleMainChange = (e) => {
     const { name, value } = e.target;
@@ -119,6 +123,53 @@ export default function ContentManager({ course, setCourse }) {
     setCourse({ ...main, content, courseStructure });
   }, [main, content, courseStructure, setCourse]);
 
+  // Section handlers
+  const handleEditSection = (idx) => {
+    setSectionTitle(content[idx].sectionTitle);
+    setResources(content[idx].resources);
+    setEditingSection(idx);
+  };
+  const handleDeleteSection = (idx) => {
+    setContent(content.filter((_, i) => i !== idx));
+    if (editingSection === idx) setEditingSection(null);
+  };
+  const handleAddOrUpdateSection = (e) => {
+    e.preventDefault();
+    if (!sectionTitle || resources.length === 0) return;
+    if (editingSection !== null) {
+      setContent(content.map((s, i) => i === editingSection ? { sectionTitle, resources } : s));
+      setEditingSection(null);
+    } else {
+      setContent([...content, { sectionTitle, resources }]);
+    }
+    setSectionTitle('');
+    setResources([]);
+  };
+  // Module handlers
+  const handleEditModule = (idx) => {
+    setModuleTitle(courseStructure[idx].moduleTitle);
+    setModuleDescription(courseStructure[idx].moduleDescription);
+    setTopics(courseStructure[idx].topics);
+    setEditingModule(idx);
+  };
+  const handleDeleteModule = (idx) => {
+    setCourseStructure(courseStructure.filter((_, i) => i !== idx));
+    if (editingModule === idx) setEditingModule(null);
+  };
+  const handleAddOrUpdateModule = (e) => {
+    e.preventDefault();
+    if (!moduleTitle || topics.length === 0) return;
+    if (editingModule !== null) {
+      setCourseStructure(courseStructure.map((m, i) => i === editingModule ? { moduleTitle, moduleDescription, topics } : m));
+      setEditingModule(null);
+    } else {
+      setCourseStructure([...courseStructure, { moduleTitle, moduleDescription, topics }]);
+    }
+    setModuleTitle('');
+    setModuleDescription('');
+    setTopics([]);
+  };
+
   return (
     <div className="w-full mx-auto my-[20px] p-6 border rounded-lg shadow-sm space-y-6">
       <h2 className="text-xl font-bold">Course Details</h2>
@@ -201,7 +252,7 @@ export default function ContentManager({ course, setCourse }) {
             </table>
           )}
         </div>
-        <Button onClick={handleAddSection} className="mt-4">Add Section</Button>
+        <Button onClick={handleAddOrUpdateSection} className="mt-4">{editingSection !== null ? 'Update Section' : 'Add Section'}</Button>
       </div>
       <div className="mt-8">
         <h3 className="text-lg font-semibold mb-2">Course Content Structure</h3>
@@ -213,6 +264,7 @@ export default function ContentManager({ course, setCourse }) {
               <tr>
                 <th className="text-left p-2 border">Section Title</th>
                 <th className="text-left p-2 border">Resources</th>
+                <th className="text-left p-2 border">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -225,6 +277,10 @@ export default function ContentManager({ course, setCourse }) {
                         <li key={i}>{res.title} ({res.type})</li>
                       ))}
                     </ul>
+                  </td>
+                  <td className="p-2 flex gap-2">
+                    <button onClick={() => handleEditSection(idx)} className="text-blue-500">Edit</button>
+                    <button onClick={() => handleDeleteSection(idx)} className="text-red-500">Delete</button>
                   </td>
                 </tr>
               ))}
@@ -289,7 +345,7 @@ export default function ContentManager({ course, setCourse }) {
             </table>
           )}
         </div>
-        <Button onClick={handleAddModule} className="mt-4">Add Module</Button>
+        <Button onClick={handleAddOrUpdateModule} className="mt-4">{editingModule !== null ? 'Update Module' : 'Add Module'}</Button>
       </div>
       <div className="mt-8">
         <h3 className="text-lg font-semibold mb-2">Course Structure</h3>
@@ -302,6 +358,7 @@ export default function ContentManager({ course, setCourse }) {
                 <th className="text-left p-2 border">Module Title</th>
                 <th className="text-left p-2 border">Module Description</th>
                 <th className="text-left p-2 border">Topics</th>
+                <th className="text-left p-2 border">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -315,6 +372,10 @@ export default function ContentManager({ course, setCourse }) {
                         <li key={i}>{topic.topicTitle} - {topic.topicDescription}</li>
                       ))}
                     </ul>
+                  </td>
+                  <td className="p-2 flex gap-2">
+                    <button onClick={() => handleEditModule(idx)} className="text-blue-500">Edit</button>
+                    <button onClick={() => handleDeleteModule(idx)} className="text-red-500">Delete</button>
                   </td>
                 </tr>
               ))}
