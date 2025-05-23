@@ -34,7 +34,7 @@ const LogIn = () => {
       } else {
         login(res.data);
       }
-      navigate("/");
+      navigate("/courses");
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Login failed");
     } finally {

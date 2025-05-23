@@ -30,7 +30,7 @@ const Navbar = () => {
 
   return (
     <nav className="flex justify-between items-center bg-gray-50 w-full p-4 shadow-sm mb-5">
-      <Link to="/" className='text-2xl font-mono text-blue-500'><img src={logo} alt="BBCskillz" className='h-9' /></Link>
+      <Link to="/courses" className='text-2xl font-mono text-blue-500'><img src={logo} alt="BBCskillz" className='h-9' /></Link>
 
       {!hideLogout && (
         <>
@@ -60,8 +60,9 @@ const Navbar = () => {
                 </Avatar>
               </PopoverTrigger>
               <PopoverContent className="flex flex-col gap-2">
-                <div className='text-lg'>
-                  Welcome, {user?.name || user?.email || "User"}
+                <div className='text-md font-semibold text-gray-800'>
+                  Welcome, {user?.name || user?.email || "Guest"}
+                  <span className="block text-sm text-gray-500 capitalize">{user?.role && `${user.role}`}</span>
                 </div>
                 <Button onClick={handleLogout}>Log out</Button>
               </PopoverContent>

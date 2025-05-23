@@ -5,18 +5,21 @@ export const AuthContext = createContext();
 
 // Provider component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // user: { name, email, role, ... }
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  });
 
   // Call this after login/signup
   const login = (userData) => {
     setUser(userData);
-    // Optionally: localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   // Call this on logout
   const logout = () => {
     setUser(null);
-    // Optionally: localStorage.removeItem('user');
+    localStorage.removeItem('user');
   };
 
   return (

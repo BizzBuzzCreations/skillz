@@ -49,16 +49,28 @@ const CoursesGrid = () => {
                     {filteredCourses.length === 0 ? (
                         <div className="text-gray-500">No courses found.</div>
                     ) : (
-                        filteredCourses.map((course, idx) => (
-                            <CourseCard
-                                key={course._id || idx}
-                                indexKey={course._id || idx}
-                                title={course.title}
-                                description={trimWords(course.description)}
-                                price={course.price ? `₹${course.price}` : "Free"}
-                                thumbnail={course.thumbnail || courseThumbnail}
-                            />
-                        ))
+                        filteredCourses.map((course, idx) => {
+                            const canModify = user && (user.role === "admin" || (user.role === "instructor" && (course.instructor && (course.instructor._id === user._id || course.instructor === user._id))));
+                            return (
+                                <div key={course._id || idx} className="relative">
+                                    <CourseCard
+                                        indexKey={course._id || idx}
+                                        title={course.title}
+                                        description={trimWords(course.description)}
+                                        price={course.price ? `₹${course.price}` : "Free"}
+                                        thumbnail={course.thumbnail || courseThumbnail}
+                                    />
+                                    {canModify && (
+                                        <a
+                                            href={`/course/${course._id}/modify`}
+                                            className="absolute top-2 right-2 bg-yellow-500 text-white px-3 py-1 rounded shadow hover:bg-yellow-600 transition text-xs z-10"
+                                        >
+                                            Modify
+                                        </a>
+                                    )}
+                                </div>
+                            );
+                        })
                     )}
                 </div>
             )}

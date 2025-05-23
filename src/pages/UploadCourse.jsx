@@ -6,15 +6,18 @@ import { useAuth } from "@/context/AuthContext";
 const UploadCourse = () => {
   const [course, setCourse] = useState({});
   const { user } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
 
   const API_URL = `http://localhost:5000/api/courses`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return; // Prevent double submit
     if (!user || !user._id) {
       alert("You must be logged in as an instructor to upload a course.");
       return;
     }
+    setSubmitting(true);
     // Attach instructor user id
     const courseData = { ...course, instructor: user._id };
     try {
@@ -31,6 +34,8 @@ const UploadCourse = () => {
       // Optionally reset form or redirect
     } catch (err) {
       alert(err.message || "Error uploading course");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -43,7 +48,9 @@ const UploadCourse = () => {
           <div className="mb-4">
             <ContentManager course={course} setCourse={setCourse} />
           </div>
-          <Button type="submit">Upload Course</Button>
+          <Button type="submit" disabled={submitting}>
+            {submitting ? "Uploading..." : "Upload Course"}
+          </Button>
         </form>
       </div>
     </div>
